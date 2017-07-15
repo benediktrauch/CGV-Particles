@@ -202,13 +202,13 @@
 
                 this._alive = this.particles.length > 0;
 
-                for (var index = 0; feuerwerk < this.particles.length; feuerwerk++) {
-                    var particle = this.particles[feuerwerk];
+                for (var index = 0; index < this.particles.length; index++) {
+                    var particle = this.particles[index];
                     particle.age += this._scaledUpdateSpeed;
 
                     if (particle.age >= particle.lifeTime) {
-                        this._stockParticles.push(this.particles.splice(feuerwerk, 1)[0]);
-                        feuerwerk--;
+                        this._stockParticles.push(this.particles.splice(index, 1)[0]);
+                        index--;
                         continue;
                     }
                     else {
@@ -301,13 +301,13 @@
 
             explosionRing1.updateFunction = function (newParticles) {
                 this._alive = this.particles.length > 0;
-                for (var index = 0; feuerwerk < this.particles.length; feuerwerk++) {
-                    var particle = this.particles[feuerwerk];
+                for (var index = 0; index < this.particles.length; index++) {
+                    var particle = this.particles[index];
                     particle.age += this._scaledUpdateSpeed;
                     if (particle.age >= particle.lifeTime) {
 
-                        this._stockParticles.push(this.particles.splice(feuerwerk, 1)[0]);
-                        feuerwerk--;
+                        this._stockParticles.push(this.particles.splice(index, 1)[0]);
+                        index--;
                         continue;
                     }
                     else {
@@ -326,13 +326,13 @@
             };
             explosionRing2.updateFunction = function (newParticles) {
                 this._alive = this.particles.length > 0;
-                for (var index = 0; feuerwerk < this.particles.length; feuerwerk++) {
-                    var particle = this.particles[feuerwerk];
+                for (var index = 0; index < this.particles.length; index++) {
+                    var particle = this.particles[index];
                     particle.age += this._scaledUpdateSpeed;
                     if (particle.age >= particle.lifeTime) {
 
-                        this._stockParticles.push(this.particles.splice(feuerwerk, 1)[0]);
-                        feuerwerk--;
+                        this._stockParticles.push(this.particles.splice(index, 1)[0]);
+                        index--;
                         continue;
                     }
                     else {
@@ -691,18 +691,16 @@
         // -----------------------------------------------------------------------------------------------------------------------
 
         particleSystem.updateFunction = function (newParticles) {
-
-
             this._alive = this.particles.length > 0;
 
-            for (var index = 0; feuerwerk < this.particles.length; feuerwerk++) {
-                var particle = this.particles[feuerwerk];
+            for (var index = 0; index < this.particles.length; index++) {
+                var particle = this.particles[index];
                 particle.age += this._scaledUpdateSpeed;
 
                 if (particle.age >= particle.lifeTime) {
                     //stars(particle);
-                    this._stockParticles.push(this.particles.splice(feuerwerk, 1)[0]);
-                    feuerwerk--;
+                    this._stockParticles.push(this.particles.splice(index, 1)[0]);
+                    index--;
                     continue;
                 }
                 else {
@@ -728,8 +726,8 @@
 
             this._alive = this.particles.length > 0;
 
-            for (var index = 0; feuerwerk < this.particles.length; feuerwerk++) {
-                var particle = this.particles[feuerwerk];
+            for (var index = 0; index < this.particles.length; index++) {
+                var particle = this.particles[index];
                 particle.age += this._scaledUpdateSpeed;
 
                 if (particle.age >= particle.lifeTime) {
@@ -741,8 +739,8 @@
                     }else {
                         explosion3(particle);
                     }
-                    this._stockParticles.push(this.particles.splice(feuerwerk, 1)[0]);
-                    feuerwerk--;
+                    this._stockParticles.push(this.particles.splice(index, 1)[0]);
+                    index--;
                     continue;
                 }
                 else {
