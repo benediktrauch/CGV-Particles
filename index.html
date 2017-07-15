@@ -28,7 +28,11 @@
         var scene = new BABYLON.Scene(engine);
 
         // Setup environment
-        var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 1), scene);
+        var light0 = new BABYLON.HemisphericLight("Hemi0", new BABYLON.Vector3(0, 1, 0), scene);
+        light0.diffuse = new BABYLON.Color3(0.1, 0.1, 0.1);
+        light0.specular = new BABYLON.Color3(0.1, 0.1, 0.1);
+        light0.groundColor = new BABYLON.Color3(0, 0, 0);
+
         var camera = new BABYLON.ArcRotateCamera("ArcRotateCamera", 1, 0.8, 30, new BABYLON.Vector3(0, 0, 0), scene);
         camera.attachControl(canvas, true);
 
@@ -37,7 +41,7 @@
         var rotationFountain = BABYLON.Mesh.CreateSphere("sphere", 0.0, 0.0, scene, false,  BABYLON.Mesh.DEFAULTSIDE);
 
         // Ground
-        var ground = BABYLON.Mesh.CreatePlane("ground", 50.0, scene);
+        var ground = BABYLON.Mesh.CreatePlane("ground", 500.0, scene);
         ground.position = new BABYLON.Vector3(0, -0.5, 0);
         ground.rotation = new BABYLON.Vector3(Math.PI / 2, 0, 0);
 
@@ -68,10 +72,9 @@
         var explosion1 = function (particle) {
             var explosionSystem = new BABYLON.ParticleSystem("particles", 2000, scene);
 
-            explosionSystem.particleTexture = new BABYLON.Texture("./star.jpg", scene);
+            explosionSystem.particleTexture = new BABYLON.Texture("./Flare.png", scene);
 
             explosionSystem.emitter = fountain;
-            console.log(particle.position.x, particle.position.y, particle.position.z);
             explosionSystem.minEmitBox = new BABYLON.Vector3(particle.position.x, particle.position.y, particle.position.z); // Starting all From
             explosionSystem.maxEmitBox = new BABYLON.Vector3(particle.position.x + 0.1, particle.position.y + 0.1, particle.position.z + 0.1); // To...
 
@@ -120,7 +123,7 @@
             var explosionSystemPeripher = new BABYLON.ParticleSystem("particles", 2000, scene);
             var explosionSystemCenter = new BABYLON.ParticleSystem("particles", 2000, scene);
 
-            explosionSystemPeripher.particleTexture = new BABYLON.Texture("./star.jpg", scene);
+            explosionSystemPeripher.particleTexture = new BABYLON.Texture("./Flare.png", scene);
             explosionSystemCenter.particleTexture = new BABYLON.Texture("./Flare.png", scene);
 
             explosionSystemPeripher.emitter = fountain;
@@ -167,7 +170,7 @@
             explosionSystemCenter.minEmitPower = 7;
             explosionSystemCenter.maxEmitPower = 7;
 
-            explosionSystemPeripher.emitRate = 5000;
+            explosionSystemPeripher.emitRate = 1000;
             explosionSystemPeripher.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
 
             explosionSystemCenter.emitRate = 1000;
@@ -197,6 +200,31 @@
 
             explosionSystemCenter.targetStopDuration = 0.05;
             explosionSystemCenter.disposeOnStop = true;
+
+            explosionSystemCenter.updateFunction = function (newParticles) {
+
+                this._alive = this.particles.length > 0;
+
+                for (var index = 0; index < this.particles.length; index++) {
+                    var particle = this.particles[index];
+                    particle.age += this._scaledUpdateSpeed;
+
+                    if (particle.age >= particle.lifeTime) {
+                        this._stockParticles.push(this.particles.splice(index, 1)[0]);
+                        index--;
+                        continue;
+                    }
+                    else {
+                        explosionEffect(particle);
+
+                        particle.direction.scaleToRef(this._scaledUpdateSpeed, this._scaledDirection);
+                        particle.position.addInPlace(this._scaledDirection);
+
+                        this.gravity.scaleToRef(this._scaledUpdateSpeed, this._scaledGravity);
+                        particle.direction.addInPlace(this._scaledGravity);
+                    }
+                }
+            };
 
             explosionSystemPeripher.start();
             explosionSystemCenter.start();
@@ -252,11 +280,11 @@
             explosionRing1.gravity = new BABYLON.Vector3(0, -9.81, 0);
             explosionRing2.gravity = new BABYLON.Vector3(0, -9.81, 0);
 
-            explosionRing1.direction1 = new BABYLON.Vector3(0, 0, 0.5);
-            explosionRing1.direction2 = new BABYLON.Vector3(0, 0, -0.5);
+            explosionRing1.direction1 = new BABYLON.Vector3(0.5, 0, 0.5);
+            explosionRing1.direction2 = new BABYLON.Vector3(-0.5, 0, -0.5);
 
-            explosionRing2.direction1 = new BABYLON.Vector3(0.5, 0, 0);
-            explosionRing2.direction2 = new BABYLON.Vector3(-0.5, 0, 0);
+            explosionRing2.direction1 = new BABYLON.Vector3(0.5, 0, 0.5);
+            explosionRing2.direction2 = new BABYLON.Vector3(-0.5, 0, -0.5);
 
             explosionRing1.minAngularSpeed = 2;
             explosionRing1.maxAngularSpeed = 2;
@@ -274,8 +302,59 @@
             explosionRing2.targetStopDuration = 0.05;
             explosionRing2.disposeOnStop = true;
 
+            explosionRing1.updateFunction = function (newParticles) {
+                this._alive = this.particles.length > 0;
+                for (var index = 0; index < this.particles.length; index++) {
+                    var particle = this.particles[index];
+                    particle.age += this._scaledUpdateSpeed;
+                    if (particle.age >= particle.lifeTime) {
+
+                        this._stockParticles.push(this.particles.splice(index, 1)[0]);
+                        index--;
+                        continue;
+                    }
+                    else {
+                        // wingy adds 2 lines...
+                        //particle.color = doubleColor4();
+                        //particle.size = randomNumber(this.minSize, this.maxSize);
+                        rocketEngine(particle, true);
+
+                        particle.direction.scaleToRef(this._scaledUpdateSpeed, this._scaledDirection);
+                        particle.position.addInPlace(this._scaledDirection);
+
+                        this.gravity.scaleToRef(this._scaledUpdateSpeed, this._scaledGravity);
+                        particle.direction.addInPlace(this._scaledGravity);
+                    }
+                }
+            };
+            explosionRing2.updateFunction = function (newParticles) {
+                this._alive = this.particles.length > 0;
+                for (var index = 0; index < this.particles.length; index++) {
+                    var particle = this.particles[index];
+                    particle.age += this._scaledUpdateSpeed;
+                    if (particle.age >= particle.lifeTime) {
+
+                        this._stockParticles.push(this.particles.splice(index, 1)[0]);
+                        index--;
+                        continue;
+                    }
+                    else {
+                        // wingy adds 2 lines...
+                        //particle.color = doubleColor4();
+                        //particle.size = randomNumber(this.minSize, this.maxSize);
+                        rocketEngine(particle, false);
+
+                        particle.direction.scaleToRef(this._scaledUpdateSpeed, this._scaledDirection);
+                        particle.position.addInPlace(this._scaledDirection);
+
+                        this.gravity.scaleToRef(this._scaledUpdateSpeed, this._scaledGravity);
+                        particle.direction.addInPlace(this._scaledGravity);
+                    }
+                }
+            };
+
             explosionRing1.start();
-            explosionRing2.start();
+            //explosionRing2.start();
         };
         var explosion4 = function (particle) {
             var explosionSystem = new BABYLON.ParticleSystem("particles", 2000, scene);
@@ -402,10 +481,107 @@
             starSystem.start();
         };
 
+        var rocketEngine = function (particle, effect) {
+            var rocketParticleSystem = new BABYLON.ParticleSystem("particles", 2000, scene);
+            rocketParticleSystem.particleTexture = new BABYLON.Texture("Flare.png", scene);
+            rocketParticleSystem.emitter = fountain;
 
+            rocketParticleSystem.minEmitBox = new BABYLON.Vector3(particle.position.x, particle.position.y, particle.position.z); // Starting all From
+            rocketParticleSystem.maxEmitBox = new BABYLON.Vector3(particle.position.x + 0.1, particle.position.y + 0.1, particle.position.z + 0.1); // To...
+
+            rocketParticleSystem.emitRate = 50;
+
+            if(effect) {
+                rocketParticleSystem.color1 = new BABYLON.Color4(0.1, 0.8, 0.3, 1);
+                rocketParticleSystem.color2 = new BABYLON.Color4(0.2, 0.9, 0.2, 1);
+                rocketParticleSystem.colorDead = new BABYLON.Color4(0, 0, 1, 0.1);
+            } else {
+                rocketParticleSystem.color1 = new BABYLON.Color4(0.8, 0.3, 0.3, 1);
+                rocketParticleSystem.color2 = new BABYLON.Color4(0.9, 0.5, 0.5, 1);
+                rocketParticleSystem.colorDead = new BABYLON.Color4(0.5, 0, 0, 0.1);
+            }
+
+            if(effect) {
+                rocketParticleSystem.minSize = 0.05;
+                rocketParticleSystem.maxSize = 0.07;
+            } else {
+                rocketParticleSystem.minSize = 0.05;
+                rocketParticleSystem.maxSize = 0.1;
+            }
+
+            if(effect) {
+                rocketParticleSystem.minLifeTime = 0.5;
+                rocketParticleSystem.maxLifeTime = 0.2;
+            } else {
+                rocketParticleSystem.minLifeTime = 0.1;
+                rocketParticleSystem.maxLifeTime = 0.2;
+            }
+
+            rocketParticleSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
+
+            rocketParticleSystem.direction1 = new BABYLON.Vector3(0.1, 1, 0.1);
+            rocketParticleSystem.direction2 = new BABYLON.Vector3(-0.1, 1, -0.1);
+
+            rocketParticleSystem.gravity = new BABYLON.Vector3(0, -9.81, 0);
+
+            rocketParticleSystem.minAngularSpeed = 0;
+            rocketParticleSystem.maxAngularSpeed = 0;
+
+            rocketParticleSystem.minEmitPower = 1;
+            rocketParticleSystem.maxEmitPower = 1;
+
+            rocketParticleSystem.updateSpeed = 0.01;
+
+            rocketParticleSystem.targetStopDuration = 1;
+            rocketParticleSystem.disposeOnStop = true;
+
+            rocketParticleSystem.start();
+        }
+
+        var explosionEffect = function (particle) {
+            var explosionSystem = new BABYLON.ParticleSystem("particles", 2000, scene);
+            explosionSystem.particleTexture = new BABYLON.Texture("Flare.png", scene);
+            explosionSystem.emitter = fountain;
+
+            explosionSystem.minEmitBox = new BABYLON.Vector3(particle.position.x, particle.position.y, particle.position.z); // Starting all From
+            explosionSystem.maxEmitBox = new BABYLON.Vector3(particle.position.x + 0.1, particle.position.y + 0.1, particle.position.z + 0.1); // To...
+
+            explosionSystem.emitRate = 2;
+
+            explosionSystem.color1 = new BABYLON.Color4(0.2, 0.2, 0.7, 1);
+            explosionSystem.color2 = new BABYLON.Color4(0.3, 0.5, 0.9, 1);
+            explosionSystem.colorDead = new BABYLON.Color4(0, 0, 0.3, 0.1);
+
+            explosionSystem.minSize = 0.05;
+            explosionSystem.maxSize = 0.1;
+
+            explosionSystem.minLifeTime = 0.1;
+            explosionSystem.maxLifeTime = 0.2;
+
+
+            explosionSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
+
+            explosionSystem.direction1 = new BABYLON.Vector3(0.1, 1, 0.1);
+            explosionSystem.direction2 = new BABYLON.Vector3(-0.1, 1, -0.1);
+
+            explosionSystem.gravity = new BABYLON.Vector3(0, -9.81, 0);
+
+            explosionSystem.minAngularSpeed = 0;
+            explosionSystem.maxAngularSpeed = 0;
+
+            explosionSystem.minEmitPower = 1;
+            explosionSystem.maxEmitPower = 1;
+
+            explosionSystem.updateSpeed = 0.01;
+
+            explosionSystem.targetStopDuration = 1;
+            explosionSystem.disposeOnStop = true;
+
+            explosionSystem.start();
+        }
 
         //Texture of each particle
-        particleSystem.particleTexture = new BABYLON.Texture("./star.jpg", scene);
+        particleSystem.particleTexture = new BABYLON.Texture("./Flare.png", scene);
         rocketSystem.particleTexture = new BABYLON.Texture("./Flare.png", scene);
         streamSystem.particleTexture = new BABYLON.Texture("./Flare.png", scene);
 
@@ -424,7 +600,12 @@
 
 
         // Colors of all particles
-
+        particleSystem.color1 = new BABYLON.Color4(1, 0, 1, 1);
+        particleSystem.color2 = new BABYLON.Color4(0, 1, 1, 1);
+        particleSystem.colorDead = new BABYLON.Color4(
+            getRandomArbitrary(0, 100) / 100 - getRandomArbitrary(0, 100) / 100,
+            getRandomArbitrary(0, 100) / 100 - getRandomArbitrary(0, 100) / 100,
+            getRandomArbitrary(0, 100) / 100 - getRandomArbitrary(0, 100) / 100, 0.3);
 
         rocketSystem.color1 = new BABYLON.Color4(0, 1, 0, 1);
         rocketSystem.color2 = new BABYLON.Color4(0, 1, 1, 1);
@@ -513,8 +694,7 @@
         // -----------------------------------------------------------------------------------------------------------------------
 
         particleSystem.updateFunction = function (newParticles) {
-            if (randomNumber(1, 500) > 497) {
-            }
+
 
             this._alive = this.particles.length > 0;
 
@@ -530,9 +710,11 @@
                 }
                 else {
                     // wingy adds 2 lines...
-                    particle.color = doubleColor4();
+                    //particle.color = doubleColor4();
                     //particle.size = randomNumber(this.minSize, this.maxSize);
-
+                    if (randomNumber(1, 500) > 497) {
+                        explosionEffect(particle);
+                    }
                     particle.direction.scaleToRef(this._scaledUpdateSpeed, this._scaledDirection);
                     particle.position.addInPlace(this._scaledDirection);
 
@@ -554,7 +736,6 @@
                 particle.age += this._scaledUpdateSpeed;
 
                 if (particle.age >= particle.lifeTime) {
-                    console.log("Dead");
                     let rand = randomNumber(1, 6);
                     if (rand < 2) {
                         explosion1(particle);
@@ -563,7 +744,6 @@
                     }else {
                         explosion3(particle);
                     }
-
                     this._stockParticles.push(this.particles.splice(index, 1)[0]);
                     index--;
                     continue;
@@ -572,6 +752,7 @@
                     // wingy adds 2 lines...
                     //particle.color = doubleColor4();
                     //particle.size = randomNumber(this.minSize, this.maxSize);
+                    rocketEngine(particle);
 
                     particle.direction.scaleToRef(this._scaledUpdateSpeed, this._scaledDirection);
                     particle.position.addInPlace(this._scaledDirection);
@@ -588,7 +769,7 @@
         // Start the particle system
 
         particleSystem.start();
-        streamSystem.start();
+        //streamSystem.start();
         rocketSystem.start();
 
         return scene;
