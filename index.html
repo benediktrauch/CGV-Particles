@@ -34,6 +34,7 @@
 
         // Fountain object
         var fountain = BABYLON.Mesh.CreateBox("foutain", 1.0, scene);
+        var rotationFountain = BABYLON.Mesh.CreateSphere("sphere", 0.0, 0.0, scene, false,  BABYLON.Mesh.DEFAULTSIDE);
 
         // Ground
         var ground = BABYLON.Mesh.CreatePlane("ground", 50.0, scene);
@@ -151,20 +152,20 @@
             explosionSystemPeripher.minSize = 0.05;
             explosionSystemPeripher.maxSize = 0.1;
 
-            explosionSystemCenter.minSize = 0.1;
+            explosionSystemCenter.minSize = 0.2;
             explosionSystemCenter.maxSize = 0.2;
 
             explosionSystemPeripher.minLifeTime = 0.1;
             explosionSystemPeripher.maxLifeTime = 0.5;
 
-            explosionSystemCenter.minLifeTime = 0.5;
-            explosionSystemCenter.maxLifeTime = 1;
+            explosionSystemCenter.minLifeTime = 2;
+            explosionSystemCenter.maxLifeTime = 2;
 
             explosionSystemPeripher.minEmitPower = 20;
             explosionSystemPeripher.maxEmitPower = 30;
 
-            explosionSystemCenter.minEmitPower = 4;
-            explosionSystemCenter.maxEmitPower = 10;
+            explosionSystemCenter.minEmitPower = 7;
+            explosionSystemCenter.maxEmitPower = 7;
 
             explosionSystemPeripher.emitRate = 5000;
             explosionSystemPeripher.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
@@ -189,7 +190,7 @@
             explosionSystemPeripher.targetStopDuration = 0.05;
             explosionSystemPeripher.disposeOnStop = true;
 
-            explosionSystemCenter.minAngularSpeed = 0;
+            explosionSystemCenter.minAngularSpeed = 2;
             explosionSystemCenter.maxAngularSpeed = 2;
 
             explosionSystemCenter.updateSpeed = 0.01;
@@ -230,11 +231,11 @@
             explosionRing2.minSize = 0.1;
             explosionRing2.maxSize = 0.2;
 
-            explosionRing1.minLifeTime = 0.9;
-            explosionRing1.maxLifeTime = 1;
+            explosionRing1.minLifeTime = 1;
+            explosionRing1.maxLifeTime = 1.5;
 
-            explosionRing2.minLifeTime = 0.9;
-            explosionRing2.maxLifeTime = 1;
+            explosionRing2.minLifeTime = 1;
+            explosionRing2.maxLifeTime = 1.5;
 
             explosionRing1.minEmitPower = 6;
             explosionRing1.maxEmitPower = 6;
@@ -358,6 +359,48 @@
 
             explosionSystem.start();
         };
+        var stars = function (particle) {
+            var starSystem = new BABYLON.ParticleSystem("particles", 2000, scene);
+
+            starSystem.particleTexture = new BABYLON.Texture("./star.jpg", scene);
+
+            starSystem.emitter = fountain;
+            console.log(particle.position.x, particle.position.y, particle.position.z);
+            starSystem.minEmitBox = new BABYLON.Vector3(particle.position.x, particle.position.y, particle.position.z); // Starting all From
+            starSystem.maxEmitBox = new BABYLON.Vector3(particle.position.x + 0.1, particle.position.y + 0.1, particle.position.z + 0.1); // To...
+
+            starSystem.color1 = new BABYLON.Color4(1, 1, 1, 1);
+            starSystem.color2 = new BABYLON.Color4(1, 1, 1, 1);
+            starSystem.colorDead = new BABYLON.Color4(1, 1, 1, 0.5);
+
+            starSystem.minSize = 0.03;
+            starSystem.maxSize = 0.05;
+
+            starSystem.minLifeTime = 0.075;
+            starSystem.maxLifeTime = 0.1;
+
+            starSystem.minEmitPower = 2;
+            starSystem.maxEmitPower = 4;
+
+            starSystem.emitRate = 50;
+            starSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
+
+            starSystem.gravity = new BABYLON.Vector3(0, -9.81, 0);
+            starSystem.gravity = new BABYLON.Vector3(0, -9.81, 0);
+
+            starSystem.direction1 = new BABYLON.Vector3(1, 0.5, 1);
+            starSystem.direction2 = new BABYLON.Vector3(-1, -0.5, -1);
+
+            starSystem.minAngularSpeed = 0;
+            starSystem.maxAngularSpeed = 2;
+
+            starSystem.updateSpeed = 0.01;
+
+            starSystem.targetStopDuration = 0.05;
+            starSystem.disposeOnStop = true;
+
+            starSystem.start();
+        };
 
 
 
@@ -398,8 +441,8 @@
         streamSystem.minSize = 0.05;
         streamSystem.maxSize = 0.075;
 
-        rocketSystem.minSize = 0.1;
-        rocketSystem.maxSize = 0.5;
+        rocketSystem.minSize = 0.01;
+        rocketSystem.maxSize = 0.05;
 
         // Life time of each particle (random between...)
         particleSystem.minLifeTime = 0.5;
@@ -480,6 +523,7 @@
                 particle.age += this._scaledUpdateSpeed;
 
                 if (particle.age >= particle.lifeTime) {
+                    //stars(particle);
                     this._stockParticles.push(this.particles.splice(index, 1)[0]);
                     index--;
                     continue;
@@ -546,27 +590,6 @@
         particleSystem.start();
         streamSystem.start();
         rocketSystem.start();
-
-        // Fountain's animation
-        var keys = [];
-        var animation = new BABYLON.Animation("animation", "rotation.y", 30, BABYLON.Animation.ANIMATIONTYPE_FLOAT,
-            BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
-        // At the animation key 0, the value of scaling is "1"
-        keys.push({
-            frame: 0,
-            value: 0
-        });
-
-        // At the animation key 50, the value of scaling is "0.2"
-        keys.push({
-            frame: 100,
-            value: Math.PI
-        });
-
-        // Launch animation
-        animation.setKeys(keys);
-        fountain.animations.push(animation);
-        scene.beginAnimation(fountain, 0, 100, true);
 
         return scene;
     };
