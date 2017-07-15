@@ -148,16 +148,16 @@
         // Where the particles comes from
         fire.emitter = fountain; // the starting object, the emitter
         fire.minEmitBox = new BABYLON.Vector3(-1.5,3,1); // Starting all From
-        fire.maxEmitBox = new BABYLON.Vector3(-1.5,4,-1); // To...
+        fire.maxEmitBox = new BABYLON.Vector3(2,4,-1); // To...
 
         smoke.emitter = fountain; // the starting object, the emitter
         smoke.minEmitBox = new BABYLON.Vector3(-1.5,3,1); // Starting all From
-        smoke.maxEmitBox = new BABYLON.Vector3(-1.5,4,-1); // To...
+        smoke.maxEmitBox = new BABYLON.Vector3(2,4,-1); // To...
 
 
         spark.emitter = fountain; // the starting object, the emitter
         spark.minEmitBox = new BABYLON.Vector3(-1.5,3,1); // Starting all From
-        spark.maxEmitBox = new BABYLON.Vector3(-1.5,4,-1); // To...
+        spark.maxEmitBox = new BABYLON.Vector3(2,4,-1); // To...
 
 
         // Colors of all particles
@@ -206,7 +206,7 @@
 
         // Gravity
         //fire.gravity = new BABYLON.Vector3(0, 9.81, 0);
-        fire.gravity = new BABYLON.Vector3(-1, 3, 0);
+        fire.gravity = new BABYLON.Vector3(-1, 4, 0);
 
         smoke.gravity = new BABYLON.Vector3(-0.2, 3, 0);
 
@@ -214,14 +214,14 @@
 
 
         // Emit direction
-        fire.direction1 = new BABYLON.Vector3(1, 0.1, 0.3);
-        fire.direction2 = new BABYLON.Vector3(1, 0.1, -0.3);
+        fire.direction1 = new BABYLON.Vector3(1, 0.5, 0.3);
+        fire.direction2 = new BABYLON.Vector3(1, 0.3, -0.3);
 
         smoke.direction1 = new BABYLON.Vector3(1, 0.1, 0.2);
         smoke.direction2 = new BABYLON.Vector3(1, 0.1, -0.2);
 
-        spark.direction1 = new BABYLON.Vector3(0.5, 0.1, 0.3);
-        spark.direction2 = new BABYLON.Vector3(0.5, 0.1, -0.3);
+        spark.direction1 = new BABYLON.Vector3(0.5, 0.5, 0.3);
+        spark.direction2 = new BABYLON.Vector3(0.5, -0.2, -0.3);
 
         // Speed & Power
         fire.minAngularSpeed = 0;
