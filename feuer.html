@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>CGV-Aufgabe 1</title>
+    <script src="babylon.js"></script>
+    <script src="hand.js"></script>
+    <style type="text/css">
+        html, body, canvas {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+<canvas id="renderCanvas"></canvas>
+<script>
+    var canvas = document.getElementById("renderCanvas");
+    var engine = new BABYLON.Engine(canvas, true);
+
+    function getRandomArbitrary(min, max) {
+        return Math.random() * (max - min);
+    }
+
+    var createScene = function () {
+        var scene = new BABYLON.Scene(engine);
+
+        // Setup environment
+        var light0 = new BABYLON.HemisphericLight("Hemi0", new BABYLON.Vector3(0, 1, 0), scene);
+        light0.diffuse = new BABYLON.Color3(0.1, 0.1, 0.1);
+        light0.specular = new BABYLON.Color3(0.1, 0.1, 0.1);
+        light0.groundColor = new BABYLON.Color3(0, 0, 0);
+
+        var camera = new BABYLON.ArcRotateCamera("ArcRotateCamera", 1, 0.8, 30, new BABYLON.Vector3(0, 0, 0), scene);
+        camera.attachControl(canvas, true);
+
+        // Fountain object
+        var fountain = BABYLON.Mesh.CreateBox("foutain", 5.0, scene);
+        fountain.scaling.x = 1;
+        fountain.scaling.y = 4;
+        fountain.scaling.z = 1;
+        var wall1 = BABYLON.Mesh.CreateBox("plane", 5, scene, false, BABYLON.Mesh.DOUBLESIDE);
+        wall1.scaling.x = 1;
+        wall1.scaling.y = 8;
+        wall1.scaling.z = 1;
+        wall1.position.x = 0;
+        wall1.position.y = 8;
+        wall1.position.z = 5;
+        var wall2 = BABYLON.Mesh.CreateBox("plane", 5, scene, false, BABYLON.Mesh.DOUBLESIDE);
+        wall2.scaling.x = 1;
+        wall2.scaling.y = 8;
+        wall2.scaling.z = 1;
+        wall2.position.x = 0;
+        wall2.position.y = 8;
+        wall2.position.z = -5;
+        var wall3 = BABYLON.Mesh.CreateBox("foutain", 5.0, scene);
+        wall3.scaling.x = 1;
+        wall3.scaling.y = 2;
+        wall3.scaling.z = 1;
+        wall3.position.y = 23;
+        var wall4 = BABYLON.Mesh.CreateBox("foutain", 5.0, scene);
+        wall4.scaling.x = 0.5;
+        wall4.scaling.y = 7;
+        wall4.scaling.z = 3;
+        wall4.position.y =10;
+        wall4.position.x =-3;
+
+
+        // Ground
+        var ground = BABYLON.Mesh.CreatePlane("ground", 500.0, scene);
+        ground.position = new BABYLON.Vector3(0, -0.5, 0);
+        ground.rotation = new BABYLON.Vector3(Math.PI / 2, 0, 0);
+
+        ground.material = new BABYLON.StandardMaterial("groundMat", scene);
+        ground.material.backFaceCulling = false;
+        ground.material.diffuseColor = new BABYLON.Color3(0.1, 0.1, 0.3);
+
+        // Create a particle system
+        var fire = new BABYLON.ParticleSystem("particles", 2000, scene);
+        var smoke = new BABYLON.ParticleSystem("particles", 2000, scene);
+        var spark = new BABYLON.ParticleSystem("particles", 2000, scene);
+
+        var rocketEngine = function (particle, effect) {
+            var rocketParticleSystem = new BABYLON.ParticleSystem("particles", 2000, scene);
+            rocketParticleSystem.particleTexture = new BABYLON.Texture("Flare.png", scene);
+            rocketParticleSystem.emitter = fountain;
+
+            rocketParticleSystem.minEmitBox = new BABYLON.Vector3(particle.position.x, particle.position.y, particle.position.z); // Starting all From
+            rocketParticleSystem.maxEmitBox = new BABYLON.Vector3(particle.position.x + 0.1, particle.position.y + 0.1, particle.position.z + 0.1); // To...
+
+            rocketParticleSystem.emitRate = 50;
+
+            if(effect) {
+                rocketParticleSystem.color1 = new BABYLON.Color4(0.1, 0.8, 0.3, 1);
+                rocketParticleSystem.color2 = new BABYLON.Color4(0.2, 0.9, 0.2, 1);
+                rocketParticleSystem.colorDead = new BABYLON.Color4(0, 0, 1, 0.1);
+            } else {
+                rocketParticleSystem.color1 = new BABYLON.Color4(0.8, 0.3, 0.3, 1);
+                rocketParticleSystem.color2 = new BABYLON.Color4(0.9, 0.5, 0.5, 1);
+                rocketParticleSystem.colorDead = new BABYLON.Color4(0.5, 0, 0, 0.1);
+            }
+
+            if(effect) {
+                rocketParticleSystem.minSize = 0.05;
+                rocketParticleSystem.maxSize = 0.07;
+            } else {
+                rocketParticleSystem.minSize = 0.05;
+                rocketParticleSystem.maxSize = 0.1;
+            }
+
+            if(effect) {
+                rocketParticleSystem.minLifeTime = 0.5;
+                rocketParticleSystem.maxLifeTime = 0.2;
+            } else {
+                rocketParticleSystem.minLifeTime = 0.1;
+                rocketParticleSystem.maxLifeTime = 0.2;
+            }
+
+            rocketParticleSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
+
+            rocketParticleSystem.direction1 = new BABYLON.Vector3(0.1, 1, 0.1);
+            rocketParticleSystem.direction2 = new BABYLON.Vector3(-0.1, 1, -0.1);
+
+            rocketParticleSystem.gravity = new BABYLON.Vector3(0, -9.81, 0);
+
+            rocketParticleSystem.minAngularSpeed = 0;
+            rocketParticleSystem.maxAngularSpeed = 0;
+
+            rocketParticleSystem.minEmitPower = 1;
+            rocketParticleSystem.maxEmitPower = 1;
+
+            rocketParticleSystem.updateSpeed = 0.01;
+
+            rocketParticleSystem.targetStopDuration = 1;
+            rocketParticleSystem.disposeOnStop = true;
+
+            rocketParticleSystem.start();
+        }
+
+
+        //Texture of each particle
+        fire.particleTexture = new BABYLON.Texture("./Fire.png", scene);
+        smoke.particleTexture = new BABYLON.Texture("./Smoke.png", scene);
+        spark.particleTexture = new BABYLON.Texture("./Flare.png", scene);
+
+        // Where the particles comes from
+        fire.emitter = fountain; // the starting object, the emitter
+        fire.minEmitBox = new BABYLON.Vector3(-1.5,3,1); // Starting all From
+        fire.maxEmitBox = new BABYLON.Vector3(-1.5,4,-1); // To...
+
+        smoke.emitter = fountain; // the starting object, the emitter
+        smoke.minEmitBox = new BABYLON.Vector3(-1.5,3,1); // Starting all From
+        smoke.maxEmitBox = new BABYLON.Vector3(-1.5,4,-1); // To...
+
+
+        spark.emitter = fountain; // the starting object, the emitter
+        spark.minEmitBox = new BABYLON.Vector3(-1.5,3,1); // Starting all From
+        spark.maxEmitBox = new BABYLON.Vector3(-1.5,4,-1); // To...
+
+
+        // Colors of all particles
+
+        fire.color1 = new BABYLON.Color4(0.8, 0.3, 0.3, 1);
+        fire.color2 = new BABYLON.Color4(0.9, 0.5, 0.5, 1);
+        fire.colorDead = new BABYLON.Color4(0.5, 0, 0, 0.1);
+
+        smoke.color1 = new BABYLON.Color4( 0.1, 0.1, 0.1, 0.4);
+        smoke.color2 = new BABYLON.Color4( 0.1, 0.1, 0.1, 0.1);
+        smoke.colorDead = new BABYLON.Color4( 0.1, 0.1, 0.1, 0);
+
+        spark.color1 = new BABYLON.Color4(0.8, 0.8, 0.3, 1);
+        spark.color2 = new BABYLON.Color4(0.9, 0.8, 0.5, 1);
+        spark.colorDead = new BABYLON.Color4(0.5, 0.5, 0, 0.1);
+
+        // Size of each particle (random between...)
+        fire.minSize = 0.4;
+        fire.maxSize = 3;
+
+        smoke.minSize = 0.05;
+        smoke.maxSize = 2;
+
+        spark.minSize = 0.1;
+        spark.maxSize = 0.6;
+
+        // Life time of each particle (random between...)
+        fire.minLifeTime = 0.7;
+        fire.maxLifeTime = 2;
+
+        smoke.minLifeTime = 1;
+        smoke.maxLifeTime = 4;
+
+        spark.minLifeTime = 0.7;
+        spark.maxLifeTime = 1;
+
+        // Emit rate
+        fire.emitRate = 500;
+        fire.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
+
+        smoke.emitRate = 5000;
+        smoke.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
+
+        spark.emitRate = 3;
+        spark.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
+
+        // Gravity
+        //fire.gravity = new BABYLON.Vector3(0, 9.81, 0);
+        fire.gravity = new BABYLON.Vector3(-1, 3, 0);
+
+        smoke.gravity = new BABYLON.Vector3(-0.2, 3, 0);
+
+        spark.gravity = new BABYLON.Vector3(-6, 7, 0);
+
+
+        // Emit direction
+        fire.direction1 = new BABYLON.Vector3(1, 0.1, 0.3);
+        fire.direction2 = new BABYLON.Vector3(1, 0.1, -0.3);
+
+        smoke.direction1 = new BABYLON.Vector3(1, 0.1, 0.2);
+        smoke.direction2 = new BABYLON.Vector3(1, 0.1, -0.2);
+
+        spark.direction1 = new BABYLON.Vector3(0.5, 0.1, 0.3);
+        spark.direction2 = new BABYLON.Vector3(0.5, 0.1, -0.3);
+
+        // Speed & Power
+        fire.minAngularSpeed = 0;
+        fire.maxAngularSpeed = 2;
+
+        smoke.minAngularSpeed = 0;
+        smoke.maxAngularSpeed = 2;
+
+        fire.minEmitPower = 6;
+        fire.maxEmitPower = 8;
+
+        spark.minEmitPower = 15;
+        spark.maxEmitPower = 20;
+
+        smoke.minEmitPower = 2;
+        smoke.maxEmitPower = 6;
+
+        // Update Speed
+        fire.updateSpeed = 0.01;
+
+        fire.disposeOnStop = false;
+
+        smoke.updateSpeed = 0.01;
+
+        smoke.disposeOnStop = false;
+
+
+        // Start the particle system
+
+        fire.start();
+        smoke.start();
+        spark.start();
+
+
+        return scene;
+    };
+
+
+    var scene = createScene();
+
+    engine.runRenderLoop(function () {
+        scene.render();
+    });
+
+    // Resize
+    window.addEventListener("resize", function () {
+        engine.resize();
+    });
+</script>
+</body>
+</html>

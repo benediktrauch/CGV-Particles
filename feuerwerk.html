@@ -65,9 +65,6 @@
             return ((random * (max - min)) + min);
         };
         // -----------------------------------------------------------------------------------------------------------------------
-        var doubleColor4 = function (min, max) {
-            return new BABYLON.Color4(Math.random() * 20, Math.random() * 20, Math.random() * 20, 1);
-        };
 
         var explosion1 = function (particle) {
             var explosionSystem = new BABYLON.ParticleSystem("particles", 2000, scene);
@@ -205,13 +202,13 @@
 
                 this._alive = this.particles.length > 0;
 
-                for (var index = 0; index < this.particles.length; index++) {
-                    var particle = this.particles[index];
+                for (var index = 0; feuerwerk < this.particles.length; feuerwerk++) {
+                    var particle = this.particles[feuerwerk];
                     particle.age += this._scaledUpdateSpeed;
 
                     if (particle.age >= particle.lifeTime) {
-                        this._stockParticles.push(this.particles.splice(index, 1)[0]);
-                        index--;
+                        this._stockParticles.push(this.particles.splice(feuerwerk, 1)[0]);
+                        feuerwerk--;
                         continue;
                     }
                     else {
@@ -304,13 +301,13 @@
 
             explosionRing1.updateFunction = function (newParticles) {
                 this._alive = this.particles.length > 0;
-                for (var index = 0; index < this.particles.length; index++) {
-                    var particle = this.particles[index];
+                for (var index = 0; feuerwerk < this.particles.length; feuerwerk++) {
+                    var particle = this.particles[feuerwerk];
                     particle.age += this._scaledUpdateSpeed;
                     if (particle.age >= particle.lifeTime) {
 
-                        this._stockParticles.push(this.particles.splice(index, 1)[0]);
-                        index--;
+                        this._stockParticles.push(this.particles.splice(feuerwerk, 1)[0]);
+                        feuerwerk--;
                         continue;
                     }
                     else {
@@ -329,13 +326,13 @@
             };
             explosionRing2.updateFunction = function (newParticles) {
                 this._alive = this.particles.length > 0;
-                for (var index = 0; index < this.particles.length; index++) {
-                    var particle = this.particles[index];
+                for (var index = 0; feuerwerk < this.particles.length; feuerwerk++) {
+                    var particle = this.particles[feuerwerk];
                     particle.age += this._scaledUpdateSpeed;
                     if (particle.age >= particle.lifeTime) {
 
-                        this._stockParticles.push(this.particles.splice(index, 1)[0]);
-                        index--;
+                        this._stockParticles.push(this.particles.splice(feuerwerk, 1)[0]);
+                        feuerwerk--;
                         continue;
                     }
                     else {
@@ -698,14 +695,14 @@
 
             this._alive = this.particles.length > 0;
 
-            for (var index = 0; index < this.particles.length; index++) {
-                var particle = this.particles[index];
+            for (var index = 0; feuerwerk < this.particles.length; feuerwerk++) {
+                var particle = this.particles[feuerwerk];
                 particle.age += this._scaledUpdateSpeed;
 
                 if (particle.age >= particle.lifeTime) {
                     //stars(particle);
-                    this._stockParticles.push(this.particles.splice(index, 1)[0]);
-                    index--;
+                    this._stockParticles.push(this.particles.splice(feuerwerk, 1)[0]);
+                    feuerwerk--;
                     continue;
                 }
                 else {
@@ -731,8 +728,8 @@
 
             this._alive = this.particles.length > 0;
 
-            for (var index = 0; index < this.particles.length; index++) {
-                var particle = this.particles[index];
+            for (var index = 0; feuerwerk < this.particles.length; feuerwerk++) {
+                var particle = this.particles[feuerwerk];
                 particle.age += this._scaledUpdateSpeed;
 
                 if (particle.age >= particle.lifeTime) {
@@ -744,8 +741,8 @@
                     }else {
                         explosion3(particle);
                     }
-                    this._stockParticles.push(this.particles.splice(index, 1)[0]);
-                    index--;
+                    this._stockParticles.push(this.particles.splice(feuerwerk, 1)[0]);
+                    feuerwerk--;
                     continue;
                 }
                 else {
