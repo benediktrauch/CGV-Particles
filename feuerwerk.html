@@ -311,9 +311,6 @@
                         continue;
                     }
                     else {
-                        // wingy adds 2 lines...
-                        //particle.color = doubleColor4();
-                        //particle.size = randomNumber(this.minSize, this.maxSize);
                         rocketEngine(particle, true);
 
                         particle.direction.scaleToRef(this._scaledUpdateSpeed, this._scaledDirection);
@@ -336,9 +333,6 @@
                         continue;
                     }
                     else {
-                        // wingy adds 2 lines...
-                        //particle.color = doubleColor4();
-                        //particle.size = randomNumber(this.minSize, this.maxSize);
                         rocketEngine(particle, false);
 
                         particle.direction.scaleToRef(this._scaledUpdateSpeed, this._scaledDirection);
@@ -352,88 +346,6 @@
 
             explosionRing1.start();
             //explosionRing2.start();
-        };
-        var explosion4 = function (particle) {
-            var explosionSystem = new BABYLON.ParticleSystem("particles", 2000, scene);
-
-            explosionSystem.particleTexture = new BABYLON.Texture("./star.jpg", scene);
-
-            explosionSystem.emitter = fountain;
-            console.log(particle.position.x, particle.position.y, particle.position.z);
-            explosionSystem.minEmitBox = new BABYLON.Vector3(particle.position.x, particle.position.y, particle.position.z); // Starting all From
-            explosionSystem.maxEmitBox = new BABYLON.Vector3(particle.position.x + 0.1, particle.position.y + 0.1, particle.position.z + 0.1); // To...
-
-            explosionSystem.color1 = new BABYLON.Color4(
-                getRandomArbitrary(0, 100) / 100,
-                getRandomArbitrary(0, 100) / 100,
-                getRandomArbitrary(0, 100) / 100, 1);
-            explosionSystem.color2 = new BABYLON.Color4(
-                getRandomArbitrary(0, 100) / 100,
-                getRandomArbitrary(0, 100) / 100,
-                getRandomArbitrary(0, 100) / 100, 1);
-            explosionSystem.colorDead = new BABYLON.Color4(
-                getRandomArbitrary(0, 100) / 100 - getRandomArbitrary(0, 100) / 100,
-                getRandomArbitrary(0, 100) / 100 - getRandomArbitrary(0, 100) / 100,
-                getRandomArbitrary(0, 100) / 100 - getRandomArbitrary(0, 100) / 100, 0.3);
-
-            explosionSystem.minSize = 0.05;
-            explosionSystem.maxSize = 0.1;
-
-            explosionSystem.minLifeTime = 0.1;
-            explosionSystem.maxLifeTime = 0.5;
-
-            explosionSystem.minEmitPower = 20;
-            explosionSystem.maxEmitPower = 30;
-
-            explosionSystem.emitRate = 5000;
-            explosionSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
-
-            explosionSystem.gravity = new BABYLON.Vector3(0, -9.81, 0);
-            explosionSystem.gravity = new BABYLON.Vector3(0, -9.81, 0);
-
-            explosionSystem.direction1 = new BABYLON.Vector3(1, 0.5, 1);
-            explosionSystem.direction2 = new BABYLON.Vector3(-1, -0.5, -1);
-
-            explosionSystem.minAngularSpeed = 0;
-            explosionSystem.maxAngularSpeed = 2;
-
-            explosionSystem.updateSpeed = 0.01;
-
-            explosionSystem.targetStopDuration = 0.05;
-            explosionSystem.disposeOnStop = true;
-
-            // Start the particle system
-            particleSystem.start();
-
-            // Fountain's animation
-            var keys = [];
-            var animation = new BABYLON.Animation("animation", "rotation.x", 30, BABYLON.Animation.ANIMATIONTYPE_FLOAT,
-                BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
-            // At the animation key 0, the value of scaling is "1"
-            keys.push({
-                frame: 0,
-                value: 0
-            });
-
-            // At the animation key 50, the value of scaling is "0.2"
-            keys.push({
-                frame: 50,
-                value: Math.PI
-            });
-
-            // At the animation key 100, the value of scaling is "1"
-            keys.push({
-                frame: 100,
-                value: 0
-            });
-
-            // Launch animation
-            animation.setKeys(keys);
-            fountain.animations.push(animation);
-            scene.beginAnimation(fountain, 0, 100, true);
-
-
-            explosionSystem.start();
         };
         var stars = function (particle) {
             var starSystem = new BABYLON.ParticleSystem("particles", 2000, scene);
@@ -486,7 +398,7 @@
             rocketParticleSystem.minEmitBox = new BABYLON.Vector3(particle.position.x, particle.position.y, particle.position.z); // Starting all From
             rocketParticleSystem.maxEmitBox = new BABYLON.Vector3(particle.position.x + 0.1, particle.position.y + 0.1, particle.position.z + 0.1); // To...
 
-            rocketParticleSystem.emitRate = 50;
+            rocketParticleSystem.emitRate = 30;
 
             if(effect) {
                 rocketParticleSystem.color1 = new BABYLON.Color4(0.1, 0.8, 0.3, 1);
@@ -516,8 +428,8 @@
 
             rocketParticleSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
 
-            rocketParticleSystem.direction1 = new BABYLON.Vector3(0.1, 1, 0.1);
-            rocketParticleSystem.direction2 = new BABYLON.Vector3(-0.1, 1, -0.1);
+            rocketParticleSystem.direction1 = new BABYLON.Vector3(0.01, 1, 0.01);
+            rocketParticleSystem.direction2 = new BABYLON.Vector3(-0.01, 1, -0.01);
 
             rocketParticleSystem.gravity = new BABYLON.Vector3(0, -9.81, 0);
 
@@ -704,9 +616,6 @@
                     continue;
                 }
                 else {
-                    // wingy adds 2 lines...
-                    //particle.color = doubleColor4();
-                    //particle.size = randomNumber(this.minSize, this.maxSize);
                     if (randomNumber(1, 500) > 497) {
                         explosionEffect(particle);
                     }
@@ -744,9 +653,6 @@
                     continue;
                 }
                 else {
-                    // wingy adds 2 lines...
-                    //particle.color = doubleColor4();
-                    //particle.size = randomNumber(this.minSize, this.maxSize);
                     rocketEngine(particle);
 
                     particle.direction.scaleToRef(this._scaledUpdateSpeed, this._scaledDirection);
