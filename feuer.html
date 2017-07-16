@@ -31,7 +31,7 @@
         var light0 = new BABYLON.HemisphericLight("Hemi0", new BABYLON.Vector3(0, 1, 0), scene);
         light0.diffuse = new BABYLON.Color3(0.1, 0.1, 0.1);
         light0.specular = new BABYLON.Color3(0.1, 0.1, 0.1);
-        light0.groundColor = new BABYLON.Color3(0, 0, 0);
+        light0.groundColor = new BABYLON.Color3(0.3, 0.3, 0.3);
 
         var camera = new BABYLON.ArcRotateCamera("ArcRotateCamera", 1, 0.8, 30, new BABYLON.Vector3(0, 0, 0), scene);
         camera.attachControl(canvas, true);
@@ -39,33 +39,54 @@
         // Fountain object
         var fountain = BABYLON.Mesh.CreateBox("foutain", 5.0, scene);
         fountain.scaling.x = 1;
-        fountain.scaling.y = 4;
+        fountain.scaling.y = 2;
         fountain.scaling.z = 1;
+        fountain.position.y = 4;
         var wall1 = BABYLON.Mesh.CreateBox("plane", 5, scene, false, BABYLON.Mesh.DOUBLESIDE);
         wall1.scaling.x = 1;
-        wall1.scaling.y = 8;
-        wall1.scaling.z = 1;
+        wall1.scaling.y = 6;
+        wall1.scaling.z = 3;
         wall1.position.x = 0;
-        wall1.position.y = 8;
-        wall1.position.z = 5;
+        wall1.position.y = 14;
+        wall1.position.z = 10;
         var wall2 = BABYLON.Mesh.CreateBox("plane", 5, scene, false, BABYLON.Mesh.DOUBLESIDE);
         wall2.scaling.x = 1;
-        wall2.scaling.y = 8;
-        wall2.scaling.z = 1;
+        wall2.scaling.y = 6;
+        wall2.scaling.z = 3;
         wall2.position.x = 0;
-        wall2.position.y = 8;
-        wall2.position.z = -5;
+        wall2.position.y = 14;
+        wall2.position.z = -10;
         var wall3 = BABYLON.Mesh.CreateBox("foutain", 5.0, scene);
         wall3.scaling.x = 1;
         wall3.scaling.y = 2;
         wall3.scaling.z = 1;
-        wall3.position.y = 23;
+        wall3.position.y = 24;
         var wall4 = BABYLON.Mesh.CreateBox("foutain", 5.0, scene);
-        wall4.scaling.x = 0.5;
-        wall4.scaling.y = 7;
-        wall4.scaling.z = 3;
-        wall4.position.y =10;
-        wall4.position.x =-3;
+        wall4.scaling.x = 5;
+        wall4.scaling.y = 6;
+        wall4.scaling.z = 7;
+        wall4.position.y =14;
+        wall4.position.x =-14;
+
+        var roof1 = BABYLON.Mesh.CreateBox("Box1", 6.0, scene);
+        roof1.rotation.x = Math.PI / 4;
+        roof1.scaling.x = 5;
+        roof1.scaling.y = 6;
+        roof1.scaling.z = 0.5;
+        roof1.position.x = -12;
+        roof1.position.y = 36;
+        roof1.position.z = -11.7;
+
+        var roof2 = BABYLON.Mesh.CreateBox("Box1", 6.0, scene);
+        roof2.rotation.x = 0.25* Math.PI;
+        roof2.scaling.x = 5;
+        roof2.scaling.y = 0.5;
+        roof2.scaling.z = 6;
+        roof2.position.x = -12;
+        roof2.position.y = 36;
+        roof2.position.z = 11.7;
+
+
 
 
         // Ground
@@ -148,7 +169,7 @@
         // Where the particles comes from
         fire.emitter = fountain; // the starting object, the emitter
         fire.minEmitBox = new BABYLON.Vector3(-1.5,3,1); // Starting all From
-        fire.maxEmitBox = new BABYLON.Vector3(2,4,-1); // To...
+        fire.maxEmitBox = new BABYLON.Vector3(2,6,-1); // To...
 
         smoke.emitter = fountain; // the starting object, the emitter
         smoke.minEmitBox = new BABYLON.Vector3(-1.5,3,1); // Starting all From
